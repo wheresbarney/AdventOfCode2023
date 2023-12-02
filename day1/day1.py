@@ -1,9 +1,5 @@
 # https://adventofcode.com/2023/day/1
 
-def parse(input):
-    return input
-
-
 def q1(lines):
     sum = 0
     for line in lines:
