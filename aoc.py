@@ -14,14 +14,14 @@ with open(src, 'rb') as f:
     code = compile(f.read(), src, 'exec')
 exec(code)
 
-with open(input, 'r') as f:
-    data = [l.rstrip() for l in f]
+with open(input, 'r') as file:
+    data = [line.rstrip() for line in file]
 
 t1 = perf_counter()
 if '1' in function:
-    output = q1(data)
+    output = q1(data)  # noqa: F821
 else:
-    output = q2(data)
+    output = q2(data)  # noqa: F821
 t2 = perf_counter()
 
 print(output)
