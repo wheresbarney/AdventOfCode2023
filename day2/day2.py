@@ -1,34 +1,26 @@
 # https://adventofcode.com/2023/day/2
 
-from math import prod as product
+from math import prod
+
+def parse_dice(dice):
+  count, colour = dice.split(' ')
+  return int(count), colour
+
 
 def parse(input):
     games = []
     for line in input:
-        game = []
-        glimpses = line.split(': ')[1].split('; ')
-        for glimpse_str in glimpses:
-            glimpse = []
-            for count_and_colours in glimpse_str.split(', '):
-                count, colour = count_and_colours.split(' ')
-                glimpse.append((int(count), colour))
-            game.append(glimpse)
-        games.append(game)
+        glimpses = [glimpse.split(', ') for glimpse in line.split(': ')[1].split('; ')]
+        games.append([[parse_dice(dice) for dice in glimpse] for glimpse in glimpses])
     return games
 
 
 def q1(lines):
     games = parse(lines)
-    limits = {'red': 12, 'green': 13, 'blue': 14}
     total = 0
+    limits = {'red': 12, 'green': 13, 'blue': 14}
     for i, game in enumerate(games):
-        valid = True
-        for glimpse in game:
-            over_limit = any([count > limits[colour] for count, colour in glimpse])
-            if over_limit:
-                valid = False
-                break
-        if valid:
+        if not [colour for t in game for count, colour in t if count > limits[colour]]:
             total += i + 1
     return total
 
@@ -36,10 +28,6 @@ def q1(lines):
 def q2(lines):
     total = 0
     for game in parse(lines):
-        colour_totals = {}
-        for glimpse in game:
-            for count, colour in glimpse:
-                if colour_totals.get(colour, 0) < count:
-                    colour_totals[colour] = count
-        total += product(colour_totals.values())
+        colours = ({t[1] for a in game for t in a})
+        total += prod([max([t[0] for a in game for t in a if t[1] == colour]) for colour in colours])
     return total
