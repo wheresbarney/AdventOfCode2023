@@ -23,9 +23,7 @@ def parse(lines):
                 if char != "." and not char.isdigit():
                     symbols.append((line_num, pos, char))
         if current_num:  # EOL also terminates number
-            part_nums.append(
-                (line_num, pos - len(current_num), pos - 1, int(current_num))
-            )
+            part_nums.append((line_num, pos - len(current_num), pos, int(current_num)))
     # print(f"{part_nums=}")
     # print(f"{symbols=}")
     return part_nums, symbols
