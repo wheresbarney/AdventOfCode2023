@@ -4,36 +4,39 @@
 from collections import Counter
 
 
-FACE_VAL = {"T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
-FACE_VAL.update({str(d): d for d in range(2, 10)})
+FACE_VALS = {"T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
+FACE_VALS.update({str(d): d for d in range(2, 10)})
 
 
-def pattern(cards):
-    counts = [c[1] for c in Counter(cards).most_common()]
-    if counts[0] == 5:
+def parse_and_sort(lines, key):
+    hands = [(hand[0], int(hand[1])) for hand in [line.split() for line in lines]]
+    return sum([(i + 1) * hand[1] for i, hand in enumerate(sorted(hands, key=key))])
+
+
+def hand_score(firsts, seconds):
+    if firsts == 5:
         return 7
-    if counts[0] == 4:
+    if firsts == 4:
         return 6
-    if counts[0] == 3:
-        if counts[1] == 2:
+    if firsts == 3:
+        if seconds == 2:
             return 5
         return 4
-    if counts[0] == 2:
-        if counts[1] == 2:
+    if firsts == 2:
+        if seconds == 2:
             return 3
         return 2
     return 1
 
 
-def q1(lines):
-    hands = sorted(
-        [(hand[0], int(hand[1])) for hand in [line.split() for line in lines]],
-        key=lambda hand: tuple([pattern(hand[0])] + [FACE_VAL.get(c) for c in hand[0]]),
-    )
-    return sum([(i + 1) * hand[1] for i, hand in enumerate(hands)])
+def score_hand(cards):
+    counts = [c[1] for c in Counter(cards).most_common()]
+    firsts = counts[0]
+    seconds = counts[1] if len(counts) > 1 else 0
+    return hand_score(firsts, seconds)
 
 
-def pattern_with_wildcard(cards):
+def score_hand_with_jokers(cards):
     counter = Counter(cards)
     most_common = counter.most_common()
     counts = [c[1] for c in most_common]
@@ -51,27 +54,21 @@ def pattern_with_wildcard(cards):
         # just add to firsts
         firsts += jokers
 
-    if firsts == 5:
-        return 7
-    if firsts == 4:
-        return 6
-    if firsts == 3:
-        if seconds == 2:
-            return 5
-        return 4
-    if firsts == 2:
-        if seconds == 2:
-            return 3
-        return 2
-    return 1
+    return hand_score(firsts, seconds)
+
+
+def q1(lines):
+    return parse_and_sort(
+        lines,
+        lambda hand: tuple([score_hand(hand[0])] + [FACE_VALS.get(c) for c in hand[0]]),
+    )
 
 
 def q2(lines):
-    FACE_VAL["J"] = 1
-    hands = sorted(
-        [(hand[0], int(hand[1])) for hand in [line.split() for line in lines]],
-        key=lambda hand: tuple(
-            [pattern_with_wildcard(hand[0])] + [FACE_VAL.get(c) for c in hand[0]]
+    FACE_VALS["J"] = 1
+    return parse_and_sort(
+        lines,
+        lambda hand: tuple(
+            [score_hand_with_jokers(hand[0])] + [FACE_VALS.get(c) for c in hand[0]]
         ),
     )
-    return sum([(i + 1) * hand[1] for i, hand in enumerate(hands)])
