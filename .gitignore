@@ -1,3 +1,5 @@
 .DS_Store
 .watchman*
 .vscode/*
+launch.json
+settings.json
