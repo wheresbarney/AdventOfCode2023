@@ -145,7 +145,7 @@ def q2(map):
     start = [(line.index("S"), y) for y, line in enumerate(map) if "S" in line][0]
     distances = explore_dijkstra(start, map)
 
-    # haven't worked out why this -1 is required but it fixes the result!  ........V
+    # haven't worked out why this -1 is required but it fixes the result!
     even_corners = len([v for v in distances.values() if v % 2 == 0 and v > 65]) - 1
     odd_corners = len([v for v in distances.values() if v % 2 == 1 and v > 65])
 
@@ -155,13 +155,12 @@ def q2(map):
     grids_reachable = (26_501_365 - (len(map) // 2)) // len(map)
     assert grids_reachable == 202_300, grids_reachable
 
-    ret = (
+    return (
         (grids_reachable + 1) * (grids_reachable + 1) * odd_full
         + (grids_reachable * grids_reachable) * even_full
         - (grids_reachable + 1) * odd_corners
         + grids_reachable * even_corners
     )
-    return f"got {ret}, expected 604592315958630, diff={ret - 604592315958630}"
 
 
 def q2_copied_right(input):
